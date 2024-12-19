@@ -1,0 +1,5 @@
+- name: Остановить сервисы с Docker Compose
+  command: docker compose down
+  args:
+    chdir: "/mnt/c/Users/Ruben/PycharmProjects/Devps/DevOps3"
+  tags: stop
