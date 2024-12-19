@@ -1,47 +1,49 @@
 pipeline {
-    agent {
-        docker {
-            image 'ansible/ansible:latest'
-        }
-    }
+    agent any
     environment {
-        ANSIBLE_PLAYBOOK = "playbook.yml"
         INVENTORY_FILE = "inventory/hosts"
+        ANSIBLE_PLAYBOOK = "playbook.yml"
         ANSIBLE_USER = "Ruben"
-        ANSIBLE_PASSWORD = credentials('ansible_password')
+        ANSIBLE_BECOME_PASS = "001999"
     }
     stages {
         stage('Preparar Entorno') {
             steps {
                 script {
-                    echo "Etapa 1: Preparar entorno - Instalación de dependencias y configuración"
+                    echo 'Instalando dependencias si es necesario...'
                 }
-                sh """
-                    ansible --version
-                """
+                sh '''
+                    if ! command -v ansible >/dev/null 2>&1; then
+                        echo "Ansible no está instalado. Instalando Ansible..."
+                        sudo apt update
+                        sudo apt install -y ansible
+                    else
+                        echo "Ansible ya está instalado."
+                    fi
+                '''
             }
         }
         stage('Ejecutar Playbook') {
             steps {
                 script {
-                    echo "Etapa 2: Ejecutar playbook de Ansible"
+                    echo 'Ejecutando el playbook de Ansible...'
                 }
                 sh """
                     ansible-playbook ${ANSIBLE_PLAYBOOK} \
                     -i ${INVENTORY_FILE} \
                     --user=${ANSIBLE_USER} \
-                    --extra-vars "ansible_become_pass=${ANSIBLE_PASSWORD}" \
-                    --tags docker_setup,clone_repository
+                    --extra-vars "ansible_become_pass=${ANSIBLE_BECOME_PASS} ansible_python_interpreter=/usr/bin/python3" \
+                    --tags docker_setup,clone_repository,start_services
                 """
             }
         }
     }
     post {
         always {
-            echo "Pipeline completado."
+            echo 'Pipeline completado.'
         }
         failure {
-            echo "Pipeline fallido."
+            echo 'Pipeline fallido.'
         }
     }
 }
