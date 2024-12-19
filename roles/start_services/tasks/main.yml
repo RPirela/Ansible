@@ -1,0 +1,4 @@
+- name: Запустить сервисы с Docker Compose
+  command: docker-compose up -d --force-recreate
+  args:
+    chdir: "/mnt/c/Users/Ruben/PycharmProjects/Devps/DevOps3"
