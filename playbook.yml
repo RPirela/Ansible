@@ -5,7 +5,7 @@
   become_user: Ruben
   vars:
     ansible_become_pass: "001999"
-    ansible_python_interpreter: /usr/bin/python3.12
+    ansible_python_interpreter: /usr/bin/python3
   roles:
     - clone_repository
     - docker_setup
