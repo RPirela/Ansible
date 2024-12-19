@@ -1,13 +1,15 @@
-pipeline { 
-    agent any
-
-    environment {
-        ANSIBLE_PLAYBOOK = "playbook.yml" // Ruta al archivo playbook de Ansible
-        INVENTORY_FILE = "inventory/hosts" // Ruta al archivo de inventario
-        ANSIBLE_USER = "Ruben" // Usuario Ansible
-        ANSIBLE_PASSWORD = credentials('ansible_password') // Credencial segura almacenada en Jenkins
+pipeline {
+    agent {
+        docker {
+            image 'ansible/ansible:latest'
+        }
     }
-
+    environment {
+        ANSIBLE_PLAYBOOK = "playbook.yml"
+        INVENTORY_FILE = "inventory/hosts"
+        ANSIBLE_USER = "Ruben"
+        ANSIBLE_PASSWORD = credentials('ansible_password')
+    }
     stages {
         stage('Preparar Entorno') {
             steps {
@@ -16,11 +18,9 @@ pipeline {
                 }
                 sh """
                     ansible --version
-                    which ansible-playbook
                 """
             }
         }
-
         stage('Ejecutar Playbook') {
             steps {
                 script {
@@ -35,23 +35,7 @@ pipeline {
                 """
             }
         }
-
-        stage('Iniciar Aplicaciones') {
-            steps {
-                script {
-                    echo "Etapa 3: Iniciar aplicaciones"
-                }
-                sh """
-                    ansible-playbook ${ANSIBLE_PLAYBOOK} \
-                    -i ${INVENTORY_FILE} \
-                    --user=${ANSIBLE_USER} \
-                    --extra-vars "ansible_become_pass=${ANSIBLE_PASSWORD}" \
-                    --tags start_services
-                """
-            }
-        }
     }
-
     post {
         always {
             echo "Pipeline completado."
