@@ -1,0 +1,29 @@
+- name: Клонировать репозиторий frontend
+  become_user: Ruben
+  git:
+    repo: "https://github.com/RPirela/Frontend_LP1.git"
+    dest: "/mnt/c/Users/Ruben/PycharmProjects/Devps/DevOps3/frontend_2"
+    update: yes  # Actualiza el repositorio si ya existe
+    force: yes
+  become: true
+  tags: clone_repository
+
+- name: Клонировать репозиторий backend_2
+  become_user: Ruben
+  git:
+    repo: "https://github.com/RPirela/Backend_LP1.git"
+    dest: "/mnt/c/Users/Ruben/PycharmProjects/Devps/DevOps3/backend_2"
+    update: yes  # Actualiza el repositorio si ya existe
+    force: yes
+  become: true
+  tags: clone_repository
+
+- name: Клонировать репозиторий DevOps
+  become_user: Ruben
+  git:
+    repo: "https://github.com/RPirela/DevOps.git"
+    dest: "/mnt/c/Users/Ruben/PycharmProjects/Devps/DevOps3/devops_2"
+    update: yes  # Actualiza el repositorio si ya existe
+    force: yes
+  become: true
+  tags: clone_repository
