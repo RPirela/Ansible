@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        ANSIBLE_PLAYBOOK = "playbook.yml" // Ruta completa al ejecutable ansible-playbook
-        INVENTORY_FILE = "inventory/hosts"          // Ruta al archivo de inventario
+        ANSIBLE_PLAYBOOK = "/usr/bin/ansible-playbook" // Ruta completa al ejecutable ansible-playbook
+        INVENTORY_FILE = "inventory/hosts"            // Ruta al archivo de inventario
         ANSIBLE_USER = "Ruben"                        // Usuario Ansible
         ANSIBLE_PASSWORD = credentials('ansible_password') // Contraseña almacenada en Jenkins como credencial segura
     }
@@ -51,5 +51,8 @@ pipeline {
                 echo "Pipeline завершен с ошибкой."
             }
         }
+    }
+}
+
     }
 }
