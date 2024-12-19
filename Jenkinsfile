@@ -2,20 +2,30 @@ pipeline {
     agent any
 
     environment {
-        ANSIBLE_PLAYBOOK = "playbook.yml"            // Ruta al playbook de Ansible
-        INVENTORY_FILE = "inventory/hosts"          // Ruta al archivo de inventario
-        ANSIBLE_USER = "Ruben"                      // Usuario de Ansible
-        ANSIBLE_PASSWORD = credentials('ansible_password') // Contraseña almacenada en Jenkins como credencial segura
+        ANSIBLE_PLAYBOOK = "/usr/bin/ansible-playbook" // Asegúrate de que esta ruta sea correcta
+        INVENTORY_FILE = "inventory/hosts"
+        ANSIBLE_USER = "Ruben"
+        ANSIBLE_PASSWORD = credentials('ansible_password')
     }
 
     stages {
+        stage('Debug Ansible') {
+            steps
+            steps {
+                sh """
+                    which ansible-playbook
+                    ansible-playbook --version
+                """
+            }
+        }
+
         stage('Подготовка окружения') {
             steps {
                 script {
                     echo "Этап 1: Подготовка окружения (установка Docker, клонирование репозиториев)"
                 }
                 sh """
-                    ansible-playbook ${ANSIBLE_PLAYBOOK} \
+                    ${ANSIBLE_PLAYBOOK} ${ANSIBLE_PLAYBOOK} \
                     -i ${INVENTORY_FILE} \
                     --user=${ANSIBLE_USER} \
                     --extra-vars 'ansible_become_pass=${ANSIBLE_PASSWORD} ansible_python_interpreter=/usr/bin/python3' \
@@ -30,7 +40,7 @@ pipeline {
                     echo "Этап 2: Запуск приложений (Docker Compose)"
                 }
                 sh """
-                    ansible-playbook ${ANSIBLE_PLAYBOOK} \
+                    ${ANSIBLE_PLAYBOOK} ${ANSIBLE_PLAYBOOK} \
                     -i ${INVENTORY_FILE} \
                     --user=${ANSIBLE_USER} \
                     --extra-vars 'ansible_become_pass=${ANSIBLE_PASSWORD} ansible_python_interpreter=/usr/bin/python3' \
