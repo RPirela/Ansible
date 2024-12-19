@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  backend:
+    build:
+      context: ./devops_2/backend
+      dockerfile: Dockerfile
+    ports:
+      - "7000:7000"
+    volumes:
+      - ./devops_2/backend/data.txt:/app/data.txt
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./devops_2/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "7001:7000"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
