@@ -1,10 +1,9 @@
-pipeline {
+pipeline { 
     agent any
 
     environment {
-        ANSIBLE_PLAYBOOK = "/usr/bin/ansible-playbook" // Ruta completa al ejecutable ansible-playbook
-        PLAYBOOK_PATH = "ansible/main.yml"            // Ruta al playbook
-        INVENTORY_FILE = "ansible/inventory"          // Ruta al archivo de inventario
+        ANSIBLE_PLAYBOOK = "DevOps3/playbook.yml" // Ruta completa al ejecutable ansible-playbook
+        INVENTORY_FILE = "DevOps3/inventory/hosts"          // Ruta al archivo de inventario
         ANSIBLE_USER = "Ruben"                        // Usuario Ansible
         ANSIBLE_PASSWORD = credentials('ansible_password') // Contraseña almacenada en Jenkins como credencial segura
     }
@@ -16,7 +15,7 @@ pipeline {
                     echo "Этап 1: Подготовка окружения (установка Docker, клонирование репозиториев)"
                 }
                 sh """
-                    ${ANSIBLE_PLAYBOOK} ${PLAYBOOK_PATH} \
+                    ${ANSIBLE_PLAYBOOK} DevOps3/playbook.yml \
                     -i ${INVENTORY_FILE} \
                     --user=${ANSIBLE_USER} \
                     --extra-vars 'ansible_password=${ANSIBLE_PASSWORD}' \
@@ -31,7 +30,7 @@ pipeline {
                     echo "Этап 2: Запуск приложений (Docker Compose)"
                 }
                 sh """
-                    ${ANSIBLE_PLAYBOOK} ${PLAYBOOK_PATH} \
+                    ${ANSIBLE_PLAYBOOK} DevOps3/playbook.yml \
                     -i ${INVENTORY_FILE} \
                     --user=${ANSIBLE_USER} \
                     --extra-vars 'ansible_password=${ANSIBLE_PASSWORD}' \
