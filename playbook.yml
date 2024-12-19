@@ -10,4 +10,4 @@
     - clone_repository
     - docker_setup
     - start_services
-    - stop_services
+    #- stop_services
