@@ -4,7 +4,9 @@ pipeline {
     environment {
         ANSIBLE_PLAYBOOK = "/usr/bin/ansible-playbook" // Ruta completa al ejecutable ansible-playbook
         PLAYBOOK_PATH = "ansible/main.yml"            // Ruta al playbook
-        INVENTORY_FILE = "ansible/inventory"          // Ruta al inventory
+        INVENTORY_FILE = "ansible/inventory"          // Ruta al archivo de inventario
+        ANSIBLE_USER = "Ruben"                        // Usuario Ansible
+        ANSIBLE_PASSWORD = credentials('ansible_password') // Contraseña almacenada en Jenkins como credencial segura
     }
 
     stages {
@@ -14,7 +16,11 @@ pipeline {
                     echo "Этап 1: Подготовка окружения (установка Docker, клонирование репозиториев)"
                 }
                 sh """
-                    ${ANSIBLE_PLAYBOOK} ${PLAYBOOK_PATH} -i ${INVENTORY_FILE} --tags docker_setup,clone_repository
+                    ${ANSIBLE_PLAYBOOK} ${PLAYBOOK_PATH} \
+                    -i ${INVENTORY_FILE} \
+                    --user=${ANSIBLE_USER} \
+                    --extra-vars 'ansible_password=${ANSIBLE_PASSWORD}' \
+                    --tags docker_setup,clone_repository
                 """
             }
         }
@@ -25,8 +31,25 @@ pipeline {
                     echo "Этап 2: Запуск приложений (Docker Compose)"
                 }
                 sh """
-                    ${ANSIBLE_PLAYBOOK} ${PLAYBOOK_PATH} -i ${INVENTORY_FILE} --tags start_services
+                    ${ANSIBLE_PLAYBOOK} ${PLAYBOOK_PATH} \
+                    -i ${INVENTORY_FILE} \
+                    --user=${ANSIBLE_USER} \
+                    --extra-vars 'ansible_password=${ANSIBLE_PASSWORD}' \
+                    --tags start_services
                 """
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                echo "Pipeline завершен."
+            }
+        }
+        failure {
+            script {
+                echo "Pipeline завершен с ошибкой."
             }
         }
     }
