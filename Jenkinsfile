@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        ANSIBLE_PLAYBOOK = "ansible/main.yml"  // Путь до playbook
-        INVENTORY_FILE = "ansible/inventory"          // Путь до inventory-файла
-
+        ANSIBLE_PLAYBOOK = "/usr/bin/ansible-playbook" // Ruta completa al ejecutable ansible-playbook
+        PLAYBOOK_PATH = "ansible/main.yml"            // Ruta al playbook
+        INVENTORY_FILE = "ansible/inventory"          // Ruta al inventory
     }
 
     stages {
@@ -14,7 +14,7 @@ pipeline {
                     echo "Этап 1: Подготовка окружения (установка Docker, клонирование репозиториев)"
                 }
                 sh """
-                    ansible-playbook ${ANSIBLE_PLAYBOOK} -i ${INVENTORY_FILE} --tags docker_setup,clone_repository
+                    ${ANSIBLE_PLAYBOOK} ${PLAYBOOK_PATH} -i ${INVENTORY_FILE} --tags docker_setup,clone_repository
                 """
             }
         }
@@ -25,7 +25,7 @@ pipeline {
                     echo "Этап 2: Запуск приложений (Docker Compose)"
                 }
                 sh """
-                    ansible-playbook ${ANSIBLE_PLAYBOOK} -i ${INVENTORY_FILE} --tags start_services
+                    ${ANSIBLE_PLAYBOOK} ${PLAYBOOK_PATH} -i ${INVENTORY_FILE} --tags start_services
                 """
             }
         }
