@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        ANSIBLE_PLAYBOOK = "/usr/bin/ansible-playbook" // Asegúrate de que esta ruta sea correcta
+        ANSIBLE_PLAYBOOK = "playbook.yml" // Asegúrate de que esta ruta sea correcta
         INVENTORY_FILE = "inventory/hosts"
         ANSIBLE_USER = "Ruben"
         ANSIBLE_PASSWORD = credentials('ansible_password')
