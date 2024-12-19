@@ -2,48 +2,50 @@ pipeline {
     agent any
 
     environment {
-        ANSIBLE_PLAYBOOK = "playbook.yml" // Asegúrate de que esta ruta sea correcta
-        INVENTORY_FILE = "inventory/hosts"
-        ANSIBLE_USER = "Ruben"
-        ANSIBLE_PASSWORD = credentials('ansible_password')
+        ANSIBLE_PLAYBOOK = "playbook.yml" // Ruta al archivo playbook de Ansible
+        INVENTORY_FILE = "inventory/hosts" // Ruta al archivo de inventario
+        ANSIBLE_USER = "Ruben" // Usuario Ansible
+        ANSIBLE_PASSWORD = credentials('ansible_password') // Credencial segura almacenada en Jenkins
     }
 
     stages {
-        stage('Debug Ansible') {
-            steps
+        stage('Preparar Entorno') {
             steps {
+                script {
+                    echo "Etapa 1: Preparar entorno - Instalación de dependencias y configuración"
+                }
                 sh """
+                    ansible --version
                     which ansible-playbook
-                    ansible-playbook --version
                 """
             }
         }
 
-        stage('Подготовка окружения') {
+        stage('Ejecutar Playbook') {
             steps {
                 script {
-                    echo "Этап 1: Подготовка окружения (установка Docker, клонирование репозиториев)"
+                    echo "Etapa 2: Ejecutar playbook de Ansible"
                 }
                 sh """
-                    ${ANSIBLE_PLAYBOOK} ${ANSIBLE_PLAYBOOK} \
+                    ansible-playbook ${ANSIBLE_PLAYBOOK} \
                     -i ${INVENTORY_FILE} \
                     --user=${ANSIBLE_USER} \
-                    --extra-vars 'ansible_become_pass=${ANSIBLE_PASSWORD} ansible_python_interpreter=/usr/bin/python3' \
+                    --extra-vars "ansible_become_pass=${ANSIBLE_PASSWORD}" \
                     --tags docker_setup,clone_repository
                 """
             }
         }
 
-        stage('Запуск приложений') {
+        stage('Iniciar Aplicaciones') {
             steps {
                 script {
-                    echo "Этап 2: Запуск приложений (Docker Compose)"
+                    echo "Etapa 3: Iniciar aplicaciones"
                 }
                 sh """
-                    ${ANSIBLE_PLAYBOOK} ${ANSIBLE_PLAYBOOK} \
+                    ansible-playbook ${ANSIBLE_PLAYBOOK} \
                     -i ${INVENTORY_FILE} \
                     --user=${ANSIBLE_USER} \
-                    --extra-vars 'ansible_become_pass=${ANSIBLE_PASSWORD} ansible_python_interpreter=/usr/bin/python3' \
+                    --extra-vars "ansible_become_pass=${ANSIBLE_PASSWORD}" \
                     --tags start_services
                 """
             }
@@ -52,14 +54,10 @@ pipeline {
 
     post {
         always {
-            script {
-                echo "Pipeline завершен."
-            }
+            echo "Pipeline completado."
         }
         failure {
-            script {
-                echo "Pipeline завершен с ошибкой."
-            }
+            echo "Pipeline fallido."
         }
     }
 }
