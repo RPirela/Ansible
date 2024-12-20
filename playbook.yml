@@ -15,11 +15,6 @@
 - name: Настроить Git для добавления безопасных директорий
   hosts: all
   tasks:
-    - name: Настроить Git для директории frontend_2
-      command: git config --global --add safe.directory /mnt/c/Users/Ruben/PycharmProjects/Devps/DevOps3/frontend_2
-
-    - name: Настроить Git для директории backend_2
-      command: git config --global --add safe.directory /mnt/c/Users/Ruben/PycharmProjects/Devps/DevOps3/backend_2
 
     - name: Настроить Git для директории devops_2
       command: git config --global --add safe.directory /mnt/c/Users/Ruben/PycharmProjects/Devps/DevOps3/devops_2
