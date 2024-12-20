@@ -5,9 +5,21 @@
   become_user: Ruben
   vars:
     ansible_become_pass: "001999"
-    ansible_python_interpreter: /usr/bin/python3
+    ansible_python_interpreter: /usr/bin/python3.12
   roles:
     - clone_repository
     - docker_setup
     - start_services
-    #- stop_services
+  #  - stop_services
+
+- name: Настроить Git для добавления безопасных директорий
+  hosts: all
+  tasks:
+    - name: Настроить Git для директории frontend_2
+      command: git config --global --add safe.directory /mnt/c/Users/Ruben/PycharmProjects/Devps/DevOps3/frontend_2
+
+    - name: Настроить Git для директории backend_2
+      command: git config --global --add safe.directory /mnt/c/Users/Ruben/PycharmProjects/Devps/DevOps3/backend_2
+
+    - name: Настроить Git для директории devops_2
+      command: git config --global --add safe.directory /mnt/c/Users/Ruben/PycharmProjects/Devps/DevOps3/devops_2
