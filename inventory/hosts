@@ -1,2 +1,2 @@
 [all]
-localhost ansible_host=127.0.0.1 ansible_user=Ruben
+localhost ansible_host=127.0.0.1 ansible_user=Ruben ansible_ssh_pass=123
